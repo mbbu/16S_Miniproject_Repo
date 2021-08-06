@@ -10,14 +10,14 @@
 
 
  ## Downloading data
-- The first thing is downloading the data from the online Zenodo repository. This is a repository that helps scientists upload their resarch outcomes and also facilitate sharing and discovery of information
+- The first thing is downloading the data from the online Zenodo repository. This is a repository that helps scientists upload their research outcomes and also facilitate sharing and discovery of information
 ```
 wget https://zenodo.org/record/4559793/files/honey_bees_samples.zip?download=1
 gunzip evz166_supplementary_data(1).zip
 ```
 
  ## Quality checking of reads
-- FastQc checks the quality of reads from high throughput sequencing platforms and generates a a html report with the quality of reads.
+- FastQc checks the quality of reads from high throughput sequencing platforms and generates an html report with the quality of reads.
 - MultiQc combines the fastqc output into one report.
 * load fastqc
 
@@ -25,7 +25,7 @@ gunzip evz166_supplementary_data(1).zip
 ```
 for file in *.gz
 do
-	fastqc
+	fastqc $file
 done
 ```
 * load multiqc
@@ -35,6 +35,7 @@ done
  multiqc *.html
  
 ![](https://i.imgur.com/Bqd4CgE.png)
+
 ![](https://i.imgur.com/jW334t6.png)
 
  ## Trimming
@@ -73,7 +74,7 @@ Module load Usearch
 usearch -fastq_mergepairs *_R1.fastq -reverse *_R2.fastq mergedreads.fastq -relable @
 ```
 
- ## creating a subsample
+ ## Creating a subsample
  
  - The fastx_subsample command generates a random subset of sequences in a FASTA or FASTQ file.
  
@@ -137,7 +138,7 @@ _After filtering_
 # Chimera detection
 
 - QIIME2 tool is used to remove chimeras which are artifacts formed after sequences are incorrectly joined together during PCR reactions.This tool also does Alpha and Beta diversity
-- Usearch tool is used to find representative sequences or sequence Variants for the samples. Its important when assigning taxonomy.
+- Usearch tool is used to find representative sequences or sequence Variants for the samples. It's important when assigning taxonomy.
 
   ## Orient the reads
   
@@ -161,7 +162,7 @@ usearch -orient mergedreads.fastq -db ../../silver_bacteria/silva.bacteria.fasta
  
   ## Clustering OTUS
   
-- Sequences are clustered based on percentage similarity which is 97% and the chimeras within the sequences are removed.
+- Sequences are clustered based on percentage similarity, which is 97% and the chimeras within the sequences are removed.
 ``` 
  usearch -cluster_otus uniques.fasta -otus otus.fasta -uparseout uparse.txt -relabel Otu
  
@@ -235,7 +236,7 @@ Kakamega-101.7  Zotu7
  ```
     qiime tools import --input-path ./otus.fastq --output-path ./otus.qza --type 'FeatureData[Sequence]'
 ```
- # Perform Alignment using Mafft
+ # Perform alignment using Mafft
  
  - Maftt is a tool used for multiple sequence alignment.
 ```    
@@ -243,7 +244,7 @@ Kakamega-101.7  Zotu7
 ```
  # Masking sites
  - Masking is a way of telling the program to ignore parts of the sequence that are repetitive or conserved regions.
- - This is done because in the alignment some sites are not phylogenetically informative.
+ - This is done because in the alignment, some sites are not phylogenetically informative.
  ```
     qiime alignment mask --i-alignment aligned_otus.qza --o-masked-alignment masked_aligned_otus.qza
 ```
@@ -298,6 +299,8 @@ function qiime2_visualization()
   ![](https://i.imgur.com/AlBaYwt.png)
     
 ```
+![](https://i.imgur.com/AlBaYwt.png)
+
 - Shannon_Vector
 ```   
     qiime diversity alpha-group-significance  --i-alpha-diversity core-metrics-results/shannon_vector.qza   --m-metadata-file data.tsv   --o-visualization core-metrics-results/shannon_group-significance.qzv
@@ -333,7 +336,7 @@ qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxabarplo
 ```
 qiime taxa barplot --i-table ../otu_tab_map.qza --i-taxonomy taxonomy.qza --m-metadata-file ../data.tsv  --o-visualization taxbar.qzv
 ```
-![](https://i.imgur.com/d2PyulC.png
+![](https://i.imgur.com/d2PyulC.png)
 
 - Rarefied the data and generated the rarefaction curve.
 ```
